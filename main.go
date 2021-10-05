@@ -13,6 +13,7 @@ import (
 const version = "v1.0.0"
 
 var flags struct {
+	File                 string
 	Query                 bool
 	Decode                bool
 	ShowHelp              bool
@@ -48,6 +49,7 @@ Flags:
 		pflag.PrintDefaults()
 	}
 
+	pflag.StringVarP(&flags.File, "file", "f", "", "reads input from file")
 	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
@@ -87,7 +89,15 @@ Flags:
 		enc = encodeQueryComponent
 	}
 
-	if pflag.NArg() == 0 {
+	if flags.File != "" {
+		file, err := os.Open(flags.File)
+		if err != nil {
+			printErr(err)
+			os.Exit(3)
+		}
+		scanner = bufio.NewScanner(file)
+		defer file.Close()
+	} else if pflag.NArg() == 0 {
 		scanner = bufio.NewScanner(os.Stdin)
 		defer os.Stdin.Close()
 	} else {
@@ -102,7 +112,7 @@ Flags:
 		if flags.Decode {
 			escaped, err := unescape(value, enc)
 			if err != nil {
-				fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
+				printErr(err)
 				os.Exit(2)
 			}
 			fmt.Fprint(stdout, escaped)
@@ -114,9 +124,13 @@ Flags:
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
+		printErr(err)
 		os.Exit(2)
 	}
+}
+
+func printErr(err error) {
+	fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
 }
 
 type Scanner interface {
