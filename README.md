@@ -2,7 +2,7 @@
 
 Super basic URL encoding utility. I needed one, so I decided to make one.
 
-![Screenshot from 2021-10-05 18-34-51](https://user-images.githubusercontent.com/2477952/136065171-c4c693f4-38de-4b3b-b628-f066b4a96769.png)
+![Screenshot from 2021-10-05 19-29-55](https://user-images.githubusercontent.com/2477952/136073443-840ee017-27b1-45c0-be23-e33bb3a43127.png)
 
 ## Installation
 
