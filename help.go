@@ -47,17 +47,17 @@ func encodingsMessage() string {
 	var sb strings.Builder
 	sb.WriteString("Valid encodings, and their intended usages:\n")
 	sb.WriteString("                         ")
-	const example1 = "http://user:pass@site.com/index.html?foo=bar#Hello"
+	const example1 = "http://user:pass@site.com/index.html?q=value#Frag"
 	commentColor.Fprint(&sb, example1)
 	sb.WriteByte('\n')
 
 	writeRow(&sb, example1, []encodingFieldHelp{
 		{short: "s", long: "path-segment", substr: "index.html"},
 		{short: "p", long: "path", substr: "/index.html"},
-		{short: "q", long: "query", substr: "bar"},
+		{short: "q", long: "query", substr: "?q=value"},
 		{short: "h", long: "host", substr: "site.com"},
-		{short: "c", long: "cred", substr: "user:pass"},
-		{short: "f", long: "frag", substr: "#Hello"},
+		{short: "c", long: "cred", substr: "user:pass@"},
+		{short: "f", long: "frag", substr: "#Frag"},
 	})
 
 	sb.WriteString("\n                         ")
