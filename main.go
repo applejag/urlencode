@@ -17,7 +17,7 @@ const version = "v1.0.0"
 var flags struct {
 	Encode                string
 	Decode                bool
-	SeparateLines         bool
+	AllLines         bool
 	ShowHelp              bool
 	ShowVersion           bool
 	ShowLicenseWarranty   bool
@@ -47,7 +47,7 @@ func main() {
 
 	pflag.StringVarP(&flags.Encode, "encoding", "e", "path-segment", "encode/decode format")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
-	pflag.BoolVarP(&flags.SeparateLines, "lines", "l", false, "encode/decode each line by themselves")
+	pflag.BoolVarP(&flags.AllLines, "all", "a", false, "use all input at once, instead of line-by-line")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
 	pflag.BoolVar(&flags.ShowVersion, "version", false, "show version and exit")
 
@@ -121,10 +121,10 @@ func main() {
 	}
 
 	var scanner Scanner
-	if flags.SeparateLines {
-		scanner = bufio.NewScanner(reader)
-	} else {
+	if flags.AllLines {
 		scanner = NewReadAllScanner(reader)
+	} else {
+		scanner = bufio.NewScanner(reader)
 	}
 
 	for scanner.Scan() {
