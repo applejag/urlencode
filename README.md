@@ -39,10 +39,10 @@ the encoded/decoded value to STDOUT.
   urlencode myfile.txt  // read from myfile.txt
 
 Flags:
+  -a, --all                      use all input at once, instead of line-by-line
   -d, --decode                   decodes, instead of encodes
   -e, --encoding "path-segment"  encode/decode format
   -h, --help                     show this help text and exit
-  -l, --lines                    encode/decode each line by themselves
       --version                  show version and exit
 
 Valid encodings, and their intended usages:
