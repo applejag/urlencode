@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"regexp"
 
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
@@ -31,25 +30,6 @@ var stderr = colorable.NewColorableStderr()
 var errProgramNameColor = color.New(color.FgRed, color.Italic)
 var errColor = color.New(color.FgHiRed, color.Bold)
 
-var encodingsDashesRegex = regexp.MustCompile(`-{3,}`)
-var encodingsDashesColor = color.New(color.FgHiBlack)
-var encodingsMessage = encodingsDashesRegex.ReplaceAllStringFunc(`
-Valid encodings (--encoding):
-  SHORT  LONG          EXAMPLE
-                       http://user:pass@site.com/index.html?foo=bar#Hello
-  s      path-segment  --------------------------index.html--------------
-  p      path          -------------------------/index.html--------------
-  q      query         -------------------------------------foo-bar------
-  h      host          -----------------site.com-------------------------
-  c      cred          -------user:pass----------------------------------
-  f      frag          --------------------------------------------#Hello
-
-                       http://[::1%25eth0]/home/index.html
-  z      zone          --------------eth0-----------------
-`, func(dash string) string {
-	return encodingsDashesColor.Sprint(dash)
-})
-
 func main() {
 	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
 
@@ -59,19 +39,10 @@ func main() {
   under certain conditions; type '--license-c' for details.`, version)
 
 	pflag.Usage = func() {
-		fmt.Fprintf(stderr, `%s
-
-Encodes/decodes the input value for HTTP URL by default and prints
-the encoded/decoded value to STDOUT.
-
-  %s             // read from STDIN
-  %s myfile.txt  // read from myfile.txt
-
-Flags:
-`, versionText, os.Args[0], os.Args[0])
-		pflag.PrintDefaults()
-
-		fmt.Fprint(stderr, encodingsMessage)
+		fmt.Fprintln(stderr, versionText)
+		fmt.Fprintln(stderr, sampleUsageMessage())
+		fmt.Fprintln(stderr, flagsMessage())
+		fmt.Fprint(stderr, encodingsMessage())
 	}
 
 	pflag.StringVarP(&flags.Encode, "encoding", "e", "path-segment", "encode/decode format")
@@ -125,7 +96,7 @@ Flags:
 		enc = encodeFragment
 	default:
 		printErr(fmt.Errorf("invalid encoding: %q", flags.Encode))
-		fmt.Fprint(stdout, encodingsMessage)
+		fmt.Fprint(stdout, encodingsMessage())
 		os.Exit(1)
 	}
 

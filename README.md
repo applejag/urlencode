@@ -35,29 +35,27 @@ urlencode v1.0.0  Copyright (C) 2021  Kalle Jillheden
 
 Encodes/decodes the input value for HTTP URL by default and prints
 the encoded/decoded value to STDOUT.
-
   urlencode             // read from STDIN
   urlencode myfile.txt  // read from myfile.txt
 
 Flags:
-  -d, --decode            decodes, instead of encodes
-  -e, --encoding string   encode/decode format (default "path-segment")
-  -h, --help              show this help text and exit
-  -l, --lines             encode/decode each line by themselves
-      --version           show version and exit
+  -d, --decode                   decodes, instead of encodes
+  -e, --encoding "path-segment"  encode/decode format
+  -h, --help                     show this help text and exit
+  -l, --lines                    encode/decode each line by themselves
+      --version                  show version and exit
 
-Valid encodings (--encoding):
-  SHORT  LONG          EXAMPLE
-                       http://user:pass@site.com/index.html?foo=bar#Hello
-  s      path-segment  --------------------------index.html--------------
-  p      path          -------------------------/index.html--------------
-  q      query         -------------------------------------foo-bar------
-  h      host          -----------------site.com-------------------------
-  c      cred          -------user:pass----------------------------------
-  f      frag          --------------------------------------------#Hello
+Valid encodings, and their intended usages:
+                         http://user:pass@site.com/index.html?foo=bar#Hello
+  -e s, -e path-segment  --------------------------index.html--------------
+  -e p, -e path          -------------------------/index.html--------------
+  -e q, -e query         -----------------------------------------bar------
+  -e h, -e host          -----------------site.com-------------------------
+  -e c, -e cred          -------user:pass----------------------------------
+  -e f, -e frag          --------------------------------------------#Hello
 
-                       http://[::1%25eth0]/home/index.html
-  z      zone          --------------eth0-----------------
+                         http://[::1%25eth0]/home/index.html
+  -e z, -e zone          --------------eth0-----------------
 ```
 
 ## License
