@@ -26,7 +26,11 @@ $ go install github.com/jilleJr/urlencode
 
 ```console
 $ urlencode --help
-Usage of urlencode: [-qd] [values...]
+urlencode  Copyright (C) 2021  Kalle Jillheden
+
+  This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
+  This is free software, and you are welcome to redistribute it
+  under certain conditions; type '--license-c' for details.
 
 Encodes the input value for HTTP URL by default and prints
 the encoded value to STDOUT.
