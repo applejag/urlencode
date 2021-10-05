@@ -6,6 +6,8 @@ import (
 	"bufio"
 
 	"github.com/spf13/pflag"
+	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 )
 
 var flags struct {
@@ -13,6 +15,11 @@ var flags struct {
 	Decode bool
 	ShowHelp bool
 }
+
+var stdout = colorable.NewColorableStdout()
+var stderr = colorable.NewColorableStderr()
+
+var errColor = color.New(color.FgHiRed)
 
 func main() {
 	pflag.Usage = func() {
@@ -62,19 +69,19 @@ Flags:
 		if flags.Decode {
 			escaped, err := unescape(value, enc)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "err:", err)
+				fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
 				os.Exit(2)
 			}
-			fmt.Print(escaped)
+			fmt.Fprint(stdout, escaped)
 		} else {
-			fmt.Print(escape(value, enc))
+			fmt.Fprint(stdout, escape(value, enc))
 		}
 
 		fmt.Println()
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "err: ", err)
+		fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
 		os.Exit(2)
 	}
 }
