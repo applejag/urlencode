@@ -1,19 +1,21 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
 
-	"github.com/spf13/pflag"
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
+	"github.com/spf13/pflag"
 )
 
 var flags struct {
-	Query bool
-	Decode bool
-	ShowHelp bool
+	Query                 bool
+	Decode                bool
+	ShowHelp              bool
+	ShowLicenseWarranty   bool
+	ShowLicenseConditions bool
 }
 
 var stdout = colorable.NewColorableStdout()
@@ -23,7 +25,11 @@ var errColor = color.New(color.FgHiRed)
 
 func main() {
 	pflag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `Usage of %s: [-qd] [values...]
+		fmt.Fprint(os.Stderr, `urlencode  Copyright (C) 2021  Kalle Jillheden
+
+  This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
+  This is free software, and you are welcome to redistribute it
+  under certain conditions; type '--license-c' for details.
 
 Encodes the input value for HTTP URL by default and prints
 the encoded value to STDOUT.
@@ -32,18 +38,32 @@ Input is taken from the given arguments and prints the results
 one per line, or uses each line from STDIN if no args are supplied.
 
 Flags:
-`, os.Args[0])
+`)
 		pflag.PrintDefaults()
 	}
 
 	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text")
+	pflag.BoolVarP(&flags.ShowLicenseConditions, "license-c", "", false, "show license conditions")
+	pflag.BoolVarP(&flags.ShowLicenseWarranty, "license-w", "", false, "show license warranty")
+	pflag.CommandLine.MarkHidden("license-c")
+	pflag.CommandLine.MarkHidden("license-w")
 
 	pflag.Parse()
 
 	if flags.ShowHelp {
 		pflag.Usage()
+		os.Exit(0)
+	}
+
+	if flags.ShowLicenseConditions {
+		fmt.Println(licenseConditions)
+		os.Exit(0)
+	}
+
+	if flags.ShowLicenseWarranty {
+		fmt.Println(licenseWarranty)
 		os.Exit(0)
 	}
 
@@ -93,7 +113,7 @@ type Scanner interface {
 }
 
 type StringScanner struct {
-	values []string
+	values    []string
 	nextIndex int
 }
 
