@@ -29,6 +29,7 @@ var errColor = color.New(color.FgHiRed)
 func main() {
 	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
 
+  License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
   This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
   This is free software, and you are welcome to redistribute it
   under certain conditions; type '--license-c' for details.`, version)
@@ -50,7 +51,7 @@ Flags:
 	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
-	pflag.BoolVarP(&flags.ShowVersion, "version", "v", false, "show version and exit")
+	pflag.BoolVar(&flags.ShowVersion, "version", false, "show version and exit")
 
 	pflag.BoolVarP(&flags.ShowLicenseConditions, "license-c", "", false, "show license conditions")
 	pflag.BoolVarP(&flags.ShowLicenseWarranty, "license-w", "", false, "show license warranty")
