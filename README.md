@@ -20,6 +20,8 @@ $ go install github.com/jilleJr/urlencode
 
 - Colored output to highlight what's encoded/decoded
 
+- Read from arguments, or STDIN if none supplied
+
 ## Usage
 
 ```console
