@@ -46,13 +46,13 @@ Flags:
       --version                  show version and exit
 
 Valid encodings, and their intended usages:
-                         http://user:pass@site.com/index.html?foo=bar#Hello
-  -e s, -e path-segment  --------------------------index.html--------------
-  -e p, -e path          -------------------------/index.html--------------
-  -e q, -e query         -----------------------------------------bar------
-  -e h, -e host          -----------------site.com-------------------------
-  -e c, -e cred          -------user:pass----------------------------------
-  -e f, -e frag          --------------------------------------------#Hello
+                         http://user:pass@site.com/index.html?q=value#Frag
+  -e s, -e path-segment  --------------------------index.html-------------
+  -e p, -e path          -------------------------/index.html-------------
+  -e q, -e query         ------------------------------------?q=value-----
+  -e h, -e host          -----------------site.com------------------------
+  -e c, -e cred          -------user:pass@--------------------------------
+  -e f, -e frag          --------------------------------------------#Frag
 
                          http://[::1%25eth0]/home/index.html
   -e z, -e zone          --------------eth0-----------------
