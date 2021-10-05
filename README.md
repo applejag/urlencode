@@ -2,7 +2,7 @@
 
 Super basic URL encoding utility. I needed one, so I decided to make one.
 
-![Screenshot from 2021-10-05 17-19-29](https://user-images.githubusercontent.com/2477952/136052966-e00dcf9e-eece-4478-a7e5-e6703d95508d.png)
+![Screenshot from 2021-10-05 18-34-51](https://user-images.githubusercontent.com/2477952/136065171-c4c693f4-38de-4b3b-b628-f066b4a96769.png)
 
 ## Installation
 
@@ -20,7 +20,7 @@ $ go install github.com/jilleJr/urlencode
 
 - Colored output to highlight what's encoded/decoded
 
-- Read from arguments, or STDIN if none supplied
+- Read from STDIN or from a file
 
 ## Usage
 
@@ -33,15 +33,16 @@ urlencode v1.0.0  Copyright (C) 2021  Kalle Jillheden
   This is free software, and you are welcome to redistribute it
   under certain conditions; type '--license-c' for details.
 
-Encodes the input value for HTTP URL by default and prints
-the encoded value to STDOUT.
+Encodes/decodes the input value for HTTP URL by default and prints
+the encoded/decoded value to STDOUT.
 
-Input is taken from the given arguments and prints the results
-one per line, or uses each line from STDIN if no args are supplied.
+$ urlencode             // read from STDIN
+$ urlencode myfile.txt  // read from myfile.txt
 
 Flags:
   -d, --decode    decodes, instead of encodes
   -h, --help      show this help text and exit
+  -l, --lines     encode/decode each line by themselves
   -q, --query     encode/decode value as query parameter value
       --version   show version and exit
 ```
