@@ -1,8 +1,8 @@
 package main
 
 import (
-	"strings"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/spf13/pflag"
@@ -76,7 +76,7 @@ func flagsMessage() string {
 	var sb strings.Builder
 	sb.WriteString("Flags:\n")
 
-	pflag.VisitAll(func (flag *pflag.Flag) {
+	pflag.VisitAll(func(flag *pflag.Flag) {
 		if flag.Hidden {
 			return
 		}

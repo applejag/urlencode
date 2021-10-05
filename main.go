@@ -17,7 +17,7 @@ const version = "v1.0.0"
 var flags struct {
 	Encode                string
 	Decode                bool
-	AllLines         bool
+	AllLines              bool
 	ShowHelp              bool
 	ShowVersion           bool
 	ShowLicenseWarranty   bool
