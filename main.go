@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
@@ -15,7 +16,7 @@ import (
 const version = "v1.0.0"
 
 var flags struct {
-	Query                 bool
+	Encode                string
 	Decode                bool
 	SeparateLines         bool
 	ShowHelp              bool
@@ -30,6 +31,24 @@ var stderr = colorable.NewColorableStderr()
 var errProgramNameColor = color.New(color.FgRed, color.Italic)
 var errColor = color.New(color.FgHiRed, color.Bold)
 
+var encodingsDashesRegex = regexp.MustCompile(`-{3,}`)
+var encodingsDashesColor = color.New(color.FgHiBlack)
+var encodingsMessage = encodingsDashesRegex.ReplaceAllStringFunc(`
+Valid encodings (--encoding):
+                 | http://user:pass@site.com/index.html?foo=bar#Hello
+  path-segment   | --------------------------index.html--------------
+  path           | -------------------------/index.html--------------
+  query          | -------------------------------------foo bar------
+  host           | -----------------site.com-------------------------
+  cred           | -------user:pass----------------------------------
+  frag           | --------------------------------------------#Hello
+
+                 | http://[::1%25eth0]/home/index.html
+  zone           | --------------eth0-----------------
+`, func(dash string) string {
+	return encodingsDashesColor.Sprint(dash)
+})
+
 func main() {
 	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
 
@@ -39,7 +58,7 @@ func main() {
   under certain conditions; type '--license-c' for details.`, version)
 
 	pflag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `%s
+		fmt.Fprintf(stderr, `%s
 
 Encodes/decodes the input value for HTTP URL by default and prints
 the encoded/decoded value to STDOUT.
@@ -50,9 +69,11 @@ the encoded/decoded value to STDOUT.
 Flags:
 `, versionText, os.Args[0], os.Args[0])
 		pflag.PrintDefaults()
+
+		fmt.Fprint(stderr, encodingsMessage)
 	}
 
-	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
+	pflag.StringVarP(&flags.Encode, "encoding", "e", "path-segment", "encode/decode format")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	pflag.BoolVarP(&flags.SeparateLines, "lines", "l", false, "encode/decode each line by themselves")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
@@ -85,9 +106,26 @@ Flags:
 		os.Exit(0)
 	}
 
-	var enc = encodePath
-	if flags.Query {
+	var enc encoding
+	switch flags.Encode {
+	case "path-segment":
+		enc = encodePathSegment
+	case "path":
+		enc = encodePath
+	case "query":
 		enc = encodeQueryComponent
+	case "host":
+		enc = encodeHost
+	case "zone":
+		enc = encodeZone
+	case "cred":
+		enc = encodeUserPassword
+	case "frag":
+		enc = encodeFragment
+	default:
+		printErr(fmt.Errorf("invalid encoding: %q", flags.Encode))
+		fmt.Fprint(stdout, encodingsMessage)
+		os.Exit(1)
 	}
 
 	if pflag.NArg() > 1 {
