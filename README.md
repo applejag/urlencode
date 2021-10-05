@@ -2,6 +2,8 @@
 
 Super basic URL encoding utility. I needed one, so I decided to make one.
 
+![Screenshot from 2021-10-05 17-19-29](https://user-images.githubusercontent.com/2477952/136052966-e00dcf9e-eece-4478-a7e5-e6703d95508d.png)
+
 ## Installation
 
 Requires Go v1.16 (or higher)
