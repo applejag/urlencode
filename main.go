@@ -39,7 +39,7 @@ Valid encodings (--encoding):
                        http://user:pass@site.com/index.html?foo=bar#Hello
   s      path-segment  --------------------------index.html--------------
   p      path          -------------------------/index.html--------------
-  q      query         -------------------------------------foo bar------
+  q      query         -------------------------------------foo-bar------
   h      host          -----------------site.com-------------------------
   c      cred          -------user:pass----------------------------------
   f      frag          --------------------------------------------#Hello
