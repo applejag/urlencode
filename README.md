@@ -26,8 +26,9 @@ $ go install github.com/jilleJr/urlencode
 
 ```console
 $ urlencode --help
-urlencode  Copyright (C) 2021  Kalle Jillheden
+urlencode v1.0.0  Copyright (C) 2021  Kalle Jillheden
 
+  License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
   This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
   This is free software, and you are welcome to redistribute it
   under certain conditions; type '--license-c' for details.
@@ -39,8 +40,15 @@ Input is taken from the given arguments and prints the results
 one per line, or uses each line from STDIN if no args are supplied.
 
 Flags:
-  -d, --decode   decodes, instead of encodes
-  -h, --help     show this help text
-  -q, --query    encode/decode value as query parameter value
+  -d, --decode    decodes, instead of encodes
+  -h, --help      show this help text and exit
+  -q, --query     encode/decode value as query parameter value
+      --version   show version and exit
 ```
 
+## License
+
+Copyright &copy; 2021 Kalle Jillheden
+
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+See full license text in the [LICENSE](./LICENSE) file.
