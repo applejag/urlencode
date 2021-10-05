@@ -94,18 +94,19 @@ func flagsMessage() string {
 		width += 2 + len(flag.Name)
 		t := flag.Value.Type()
 		if t == "string" {
-			if flag.DefValue != "" {
-				sb.WriteByte(' ')
-				flagValueColor.Fprintf(&sb, `"%s"`, flag.DefValue)
-				width += 3 + len(flag.DefValue)
-			} else {
-				flagValueColor.Fprint(&sb, "string")
-				width += 6
-			}
+			sb.WriteByte(' ')
+			flagValueColor.Fprintf(&sb, "string")
+			width += 7
 		}
-		const spaces = "                               "
+		const spaces = "                       "
 		sb.WriteString(spaces[width:])
 		sb.WriteString(flag.Usage)
+		if flag.DefValue != "" && t == "string" {
+			sb.WriteByte(' ')
+			commentColor.Fprint(&sb, "(default: ")
+			flagValueColor.Fprintf(&sb, `"%s"`, flag.DefValue)
+			commentColor.Fprint(&sb, ")")
+		}
 		sb.WriteByte('\n')
 	})
 
@@ -121,19 +122,14 @@ the encoded/decoded value to STDOUT.
 
 	sb.WriteString("  ")
 	progNameColor.Fprint(&sb, os.Args[0])
-	sb.WriteString("             ")
+	sb.WriteString("              ")
 	commentColor.Fprint(&sb, "// read from STDIN")
 	sb.WriteString("\n  ")
 	progNameColor.Fprint(&sb, os.Args[0])
 	sb.WriteByte(' ')
 	progArgColor.Fprint(&sb, "myfile.txt")
-	sb.WriteString("  ")
+	sb.WriteString("   ")
 	commentColor.Fprint(&sb, "// read from myfile.txt")
 	sb.WriteRune('\n')
-	//Encodes/decodes the input value for HTTP URL by default and prints
-	//the encoded/decoded value to STDOUT.
-	//
-	//  %s             // read from STDIN
-	//  %s myfile.txt  // read from myfile.txt
 	return sb.String()
 }

@@ -35,15 +35,15 @@ urlencode v1.0.0  Copyright (C) 2021  Kalle Jillheden
 
 Encodes/decodes the input value for HTTP URL by default and prints
 the encoded/decoded value to STDOUT.
-  urlencode             // read from STDIN
-  urlencode myfile.txt  // read from myfile.txt
+  urlencode              // read from STDIN
+  urlencode myfile.txt   // read from myfile.txt
 
 Flags:
-  -a, --all                      use all input at once, instead of line-by-line
-  -d, --decode                   decodes, instead of encodes
-  -e, --encoding "path-segment"  encode/decode format
-  -h, --help                     show this help text and exit
-      --version                  show version and exit
+  -a, --all              use all input at once, instead of line-by-line
+  -d, --decode           decodes, instead of encodes
+  -e, --encoding string  encode/decode format (default: "path-segment")
+  -h, --help             show this help text and exit
+      --version          show version and exit
 
 Valid encodings, and their intended usages:
                          http://user:pass@site.com/index.html?q=value#Frag
