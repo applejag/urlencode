@@ -10,10 +10,13 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const version = "v1.0.0"
+
 var flags struct {
 	Query                 bool
 	Decode                bool
 	ShowHelp              bool
+	ShowVersion           bool
 	ShowLicenseWarranty   bool
 	ShowLicenseConditions bool
 }
@@ -24,12 +27,14 @@ var stderr = colorable.NewColorableStderr()
 var errColor = color.New(color.FgHiRed)
 
 func main() {
-	pflag.Usage = func() {
-		fmt.Fprint(os.Stderr, `urlencode  Copyright (C) 2021  Kalle Jillheden
+	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
 
   This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
   This is free software, and you are welcome to redistribute it
-  under certain conditions; type '--license-c' for details.
+  under certain conditions; type '--license-c' for details.`, version)
+
+	pflag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `%s
 
 Encodes the input value for HTTP URL by default and prints
 the encoded value to STDOUT.
@@ -38,13 +43,15 @@ Input is taken from the given arguments and prints the results
 one per line, or uses each line from STDIN if no args are supplied.
 
 Flags:
-`)
+`, versionText)
 		pflag.PrintDefaults()
 	}
 
 	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
-	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text")
+	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
+	pflag.BoolVarP(&flags.ShowVersion, "version", "v", false, "show version and exit")
+
 	pflag.BoolVarP(&flags.ShowLicenseConditions, "license-c", "", false, "show license conditions")
 	pflag.BoolVarP(&flags.ShowLicenseWarranty, "license-w", "", false, "show license warranty")
 	pflag.CommandLine.MarkHidden("license-c")
@@ -54,6 +61,11 @@ Flags:
 
 	if flags.ShowHelp {
 		pflag.Usage()
+		os.Exit(0)
+	}
+
+	if flags.ShowVersion {
+		fmt.Println(versionText)
 		os.Exit(0)
 	}
 
