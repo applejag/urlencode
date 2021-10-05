@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/fatih/color"
@@ -13,9 +15,9 @@ import (
 const version = "v1.0.0"
 
 var flags struct {
-	File                 string
 	Query                 bool
 	Decode                bool
+	SeparateLines         bool
 	ShowHelp              bool
 	ShowVersion           bool
 	ShowLicenseWarranty   bool
@@ -25,7 +27,8 @@ var flags struct {
 var stdout = colorable.NewColorableStdout()
 var stderr = colorable.NewColorableStderr()
 
-var errColor = color.New(color.FgHiRed)
+var errProgramNameColor = color.New(color.FgRed, color.Italic)
+var errColor = color.New(color.FgHiRed, color.Bold)
 
 func main() {
 	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
@@ -38,20 +41,20 @@ func main() {
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `%s
 
-Encodes the input value for HTTP URL by default and prints
-the encoded value to STDOUT.
+Encodes/decodes the input value for HTTP URL by default and prints
+the encoded/decoded value to STDOUT.
 
-Input is taken from the given arguments and prints the results
-one per line, or uses each line from STDIN if no args are supplied.
+$ urlencode             // read from STDIN
+$ urlencode myfile.txt  // read from myfile.txt
 
 Flags:
 `, versionText)
 		pflag.PrintDefaults()
 	}
 
-	pflag.StringVarP(&flags.File, "file", "f", "", "reads input from file")
 	pflag.BoolVarP(&flags.Query, "query", "q", false, "encode/decode value as query parameter value")
 	pflag.BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
+	pflag.BoolVarP(&flags.SeparateLines, "lines", "l", false, "encode/decode each line by themselves")
 	pflag.BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
 	pflag.BoolVar(&flags.ShowVersion, "version", false, "show version and exit")
 
@@ -82,28 +85,36 @@ Flags:
 		os.Exit(0)
 	}
 
-	var scanner Scanner
 	var enc = encodePath
-
 	if flags.Query {
 		enc = encodeQueryComponent
 	}
 
-	if flags.File != "" {
-		file, err := os.Open(flags.File)
+	if pflag.NArg() > 1 {
+		printErr(errors.New("must only supply up to one file name argument"))
+		os.Exit(1)
+	}
+
+	var reader io.Reader
+	if pflag.NArg() == 0 {
+		reader = os.Stdin
+		defer os.Stdin.Close()
+	} else {
+		filename := pflag.Arg(0)
+		file, err := os.Open(filename)
 		if err != nil {
 			printErr(err)
 			os.Exit(3)
 		}
-		scanner = bufio.NewScanner(file)
+		reader = file
 		defer file.Close()
-	} else if pflag.NArg() == 0 {
-		scanner = bufio.NewScanner(os.Stdin)
-		defer os.Stdin.Close()
+	}
+
+	var scanner Scanner
+	if flags.SeparateLines {
+		scanner = bufio.NewScanner(reader)
 	} else {
-		scanner = &StringScanner{
-			values: pflag.Args(),
-		}
+		scanner = NewReadAllScanner(reader)
 	}
 
 	for scanner.Scan() {
@@ -130,7 +141,7 @@ Flags:
 }
 
 func printErr(err error) {
-	fmt.Fprintln(stderr, errColor.Sprint("err:"), err)
+	fmt.Fprintln(stderr, errProgramNameColor.Sprintf("%s:", os.Args[0]), errColor.Sprint("err:"), err)
 }
 
 type Scanner interface {
@@ -139,23 +150,31 @@ type Scanner interface {
 	Err() error
 }
 
-type StringScanner struct {
-	values    []string
-	nextIndex int
+type readAllScanner struct {
+	reader io.Reader
+	bytes  []byte
+	err    error
 }
 
-func (ss *StringScanner) Scan() bool {
-	if ss.nextIndex >= len(ss.values) {
+func NewReadAllScanner(reader io.Reader) Scanner {
+	return &readAllScanner{
+		reader: reader,
+	}
+}
+
+func (s *readAllScanner) Scan() bool {
+	if s.bytes != nil {
 		return false
 	}
-	ss.nextIndex++
-	return true
+
+	s.bytes, s.err = io.ReadAll(s.reader)
+	return s.err == nil
 }
 
-func (ss *StringScanner) Text() string {
-	return ss.values[ss.nextIndex-1]
+func (s *readAllScanner) Text() string {
+	return string(s.bytes)
 }
 
-func (ss *StringScanner) Err() error {
-	return nil
+func (s *readAllScanner) Err() error {
+	return s.err
 }
