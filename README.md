@@ -40,11 +40,24 @@ the encoded/decoded value to STDOUT.
   urlencode myfile.txt  // read from myfile.txt
 
 Flags:
-  -d, --decode    decodes, instead of encodes
-  -h, --help      show this help text and exit
-  -l, --lines     encode/decode each line by themselves
-  -q, --query     encode/decode value as query parameter value
-      --version   show version and exit
+  -d, --decode            decodes, instead of encodes
+  -e, --encoding string   encode/decode format (default "path-segment")
+  -h, --help              show this help text and exit
+  -l, --lines             encode/decode each line by themselves
+      --version           show version and exit
+
+Valid encodings (--encoding):
+ SHORT  LONG          EXAMPLE
+                      http://user:pass@site.com/index.html?foo=bar#Hello
+ s      path-segment  --------------------------index.html--------------
+ p      path          -------------------------/index.html--------------
+ q      query         -------------------------------------foo bar------
+ h      host          -----------------site.com-------------------------
+ c      cred          -------user:pass----------------------------------
+ f      frag          --------------------------------------------#Hello
+
+                      http://[::1%25eth0]/home/index.html
+ z      zone          --------------eth0-----------------
 ```
 
 ## License

@@ -35,16 +35,17 @@ var encodingsDashesRegex = regexp.MustCompile(`-{3,}`)
 var encodingsDashesColor = color.New(color.FgHiBlack)
 var encodingsMessage = encodingsDashesRegex.ReplaceAllStringFunc(`
 Valid encodings (--encoding):
-                 | http://user:pass@site.com/index.html?foo=bar#Hello
-  path-segment   | --------------------------index.html--------------
-  path           | -------------------------/index.html--------------
-  query          | -------------------------------------foo bar------
-  host           | -----------------site.com-------------------------
-  cred           | -------user:pass----------------------------------
-  frag           | --------------------------------------------#Hello
+ SHORT  LONG          EXAMPLE
+                      http://user:pass@site.com/index.html?foo=bar#Hello
+ s      path-segment  --------------------------index.html--------------
+ p      path          -------------------------/index.html--------------
+ q      query         -------------------------------------foo bar------
+ h      host          -----------------site.com-------------------------
+ c      cred          -------user:pass----------------------------------
+ f      frag          --------------------------------------------#Hello
 
-                 | http://[::1%25eth0]/home/index.html
-  zone           | --------------eth0-----------------
+                      http://[::1%25eth0]/home/index.html
+ z      zone          --------------eth0-----------------
 `, func(dash string) string {
 	return encodingsDashesColor.Sprint(dash)
 })
@@ -108,19 +109,19 @@ Flags:
 
 	var enc encoding
 	switch flags.Encode {
-	case "path-segment":
+	case "s", "path-segment":
 		enc = encodePathSegment
-	case "path":
+	case "p", "path":
 		enc = encodePath
-	case "query":
+	case "q", "query":
 		enc = encodeQueryComponent
-	case "host":
+	case "h", "host":
 		enc = encodeHost
-	case "zone":
+	case "z", "zone":
 		enc = encodeZone
-	case "cred":
+	case "c", "cred":
 		enc = encodeUserPassword
-	case "frag":
+	case "f", "frag":
 		enc = encodeFragment
 	default:
 		printErr(fmt.Errorf("invalid encoding: %q", flags.Encode))
