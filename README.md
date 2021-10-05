@@ -47,17 +47,17 @@ Flags:
       --version           show version and exit
 
 Valid encodings (--encoding):
- SHORT  LONG          EXAMPLE
-                      http://user:pass@site.com/index.html?foo=bar#Hello
- s      path-segment  --------------------------index.html--------------
- p      path          -------------------------/index.html--------------
- q      query         -------------------------------------foo bar------
- h      host          -----------------site.com-------------------------
- c      cred          -------user:pass----------------------------------
- f      frag          --------------------------------------------#Hello
+  SHORT  LONG          EXAMPLE
+                       http://user:pass@site.com/index.html?foo=bar#Hello
+  s      path-segment  --------------------------index.html--------------
+  p      path          -------------------------/index.html--------------
+  q      query         -------------------------------------foo bar------
+  h      host          -----------------site.com-------------------------
+  c      cred          -------user:pass----------------------------------
+  f      frag          --------------------------------------------#Hello
 
-                      http://[::1%25eth0]/home/index.html
- z      zone          --------------eth0-----------------
+                       http://[::1%25eth0]/home/index.html
+  z      zone          --------------eth0-----------------
 ```
 
 ## License
