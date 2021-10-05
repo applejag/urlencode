@@ -36,8 +36,8 @@ urlencode v1.0.0  Copyright (C) 2021  Kalle Jillheden
 Encodes/decodes the input value for HTTP URL by default and prints
 the encoded/decoded value to STDOUT.
 
-$ urlencode             // read from STDIN
-$ urlencode myfile.txt  // read from myfile.txt
+  urlencode             // read from STDIN
+  urlencode myfile.txt  // read from myfile.txt
 
 Flags:
   -d, --decode    decodes, instead of encodes

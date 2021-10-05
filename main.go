@@ -44,11 +44,11 @@ func main() {
 Encodes/decodes the input value for HTTP URL by default and prints
 the encoded/decoded value to STDOUT.
 
-$ urlencode             // read from STDIN
-$ urlencode myfile.txt  // read from myfile.txt
+  %s             // read from STDIN
+  %s myfile.txt  // read from myfile.txt
 
 Flags:
-`, versionText)
+`, versionText, os.Args[0], os.Args[0])
 		pflag.PrintDefaults()
 	}
 
