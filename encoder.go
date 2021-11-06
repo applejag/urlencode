@@ -1,16 +1,4 @@
-package main
-
-import (
-	"net/url"
-	"strings"
-
-	"github.com/fatih/color"
-)
-
-// The code in this file has been taken from the source code of the `net/url`
-// Go package, v1.17.1.
-
-// Copyright (c) 2009 The Go Authors. All rights reserved.
+// SPDX-FileCopyrightText: The Go Authors. All rights reserved.
 // SPDX-FileCopyrightText: 2021 Kalle Fagerberg
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -28,8 +16,20 @@ import (
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-var escapedColor = color.New(color.BgBlack, color.FgCyan)
-var unescapedColor = color.New(color.BgBlack, color.FgCyan)
+package main
+
+import (
+	"net/url"
+	"strings"
+
+	"github.com/fatih/color"
+)
+
+// The code in this file has been taken from the source code of the `net/url`
+// Go package, v1.17.1.
+
+var escapedColor = color.New(color.BgBlack, color.FgYellow)
+var unescapedColor = color.New(color.BgBlack, color.FgYellow)
 
 const upperHex = "0123456789ABCDEF"
 
