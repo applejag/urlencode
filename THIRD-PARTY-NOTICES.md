@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Kalle Fagerberg
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 This repository ([jilleJr/urlencode](https://github.com/jilleJr/urlencode))
 contains code from many glorious other open source projects.
 

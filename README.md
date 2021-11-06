@@ -1,4 +1,12 @@
+<!--
+SPDX-FileCopyrightText: 2021 Kalle Fagerberg
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # urlencode
+
+[![REUSE status](https://api.reuse.software/badge/github.com/jilleJr/urlencode)](https://api.reuse.software/info/github.com/jilleJr/urlencode)
 
 Super basic URL encoding utility. I needed one, so I decided to make one.
 
@@ -60,7 +68,7 @@ Valid encodings, and their intended usages:
 
 ## License
 
-Copyright &copy; 2021 Kalle Jillheden
+Written and maintained by [@jilleJr](https://github.com/jilleJr).
+Licensed under the GNU GPL 3.0 or later, or the CC0 1.0, depending on the file.
 
-License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
-See full license text in the [LICENSE](./LICENSE) file.
+This repository is [REUSE](https://reuse.software/) compliant.
