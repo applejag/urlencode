@@ -18,7 +18,9 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/fatih/color"
@@ -116,7 +118,7 @@ func flagsMessage(c *cobra.Command) string {
 			flagValueColor.Fprintf(&sb, "string")
 			width += 7
 		}
-		const spaces = "                       "
+		const spaces = "                         "
 		sb.WriteString(spaces[width:])
 		sb.WriteString(flag.Usage)
 		if flag.DefValue != "" && t == "string" {
@@ -150,4 +152,43 @@ the encoded/decoded value to STDOUT.
 	commentColor.Fprint(&sb, "// read from myfile.txt")
 	sb.WriteRune('\n')
 	return sb.String()
+}
+
+func completionHelp() string {
+	return fmt.Sprintf(`Bash:
+
+  $ source <(%[1]s --completion=bash)
+
+  # To load completions for each session, execute once:
+  # Linux:
+  $ %[1]s --completion=bash > /etc/bash_completion.d/%[2]s
+  # macOS:
+  $ %[1]s --completion=bash > $(brew --prefix)/etc/bash_completion.d/%[2]s
+
+Zsh:
+
+  # If shell completion is not already enabled in your environment,
+  # you will need to enable it.  You can execute the following once:
+
+  $ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+  # To load completions for each session, execute once:
+  $ %[1]s --completion=zsh > "${fpath[1]}/_%[2]s"
+
+  # You will need to start a new shell for this setup to take effect.
+
+fish:
+
+  $ %[1]s --completion=fish | source
+
+  # To load completions for each session, execute once:
+  $ %[1]s --completion=fish > ~/.config/fish/completions/%[2]s.fish
+
+PowerShell:
+
+  PS> %[1]s --completion=powershell | Out-String | Invoke-Expression
+
+  # To load completions for every new session, run:
+  PS> %[1]s --completion=powershell > %[2]s.ps1
+  # and source this file from your PowerShell profile.`, os.Args[0], filepath.Base(os.Args[0]))
 }

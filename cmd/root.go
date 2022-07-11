@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/jilleJr/urlencode/pkg/license"
@@ -43,10 +44,10 @@ var flags struct {
 	Encode                string
 	Decode                bool
 	AllLines              bool
-	ShowHelp              bool
-	ShowVersion           bool
 	ShowLicenseWarranty   bool
 	ShowLicenseConditions bool
+	Completions           string
+	ShowCompletionsHelp   bool
 }
 
 var (
@@ -68,12 +69,34 @@ and prints the encoded/decoded value to STDOUT.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if flags.ShowLicenseConditions {
 			fmt.Println(license.Conditions)
-			os.Exit(0)
+			return
 		}
 
 		if flags.ShowLicenseWarranty {
 			fmt.Println(license.Warranty)
-			os.Exit(0)
+			return
+		}
+
+		if flags.ShowCompletionsHelp {
+			fmt.Println(completionHelp())
+			return
+		}
+
+		if flags.Completions != "" {
+			switch strings.ToLower(flags.Completions) {
+			case "bash":
+				cmd.GenBashCompletionV2(os.Stdout, true)
+			case "zsh":
+				cmd.GenZshCompletion(os.Stdout)
+			case "fish":
+				cmd.GenFishCompletion(os.Stdout, true)
+			case "powershell", "pwsh":
+				cmd.GenPowerShellCompletion(os.Stdout)
+			default:
+				printErr(fmt.Errorf("unknown shell: %q", flags.Completions))
+				os.Exit(1)
+			}
+			return
 		}
 
 		var enc encoding
@@ -171,13 +194,11 @@ func init() {
 	// Only print help if calling with --help
 	rootCmd.SilenceUsage = true
 
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 	rootCmd.Flags().StringVarP(&flags.Encode, "encoding", "e", "path-segment", "encode/decode format")
 	rootCmd.Flags().BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	rootCmd.Flags().BoolVarP(&flags.AllLines, "all", "a", false, "use all input at once, instead of line-by-line")
-	rootCmd.Flags().BoolVarP(&flags.ShowHelp, "help", "h", false, "show this help text and exit")
-	rootCmd.Flags().BoolVar(&flags.ShowVersion, "version", false, "show version and exit")
+	rootCmd.Flags().StringVar(&flags.Completions, "completion", "", "generate shell completions")
+	rootCmd.Flags().BoolVar(&flags.ShowCompletionsHelp, "help-completion", false, "help for adding shell completions")
 
 	rootCmd.Flags().BoolVarP(&flags.ShowLicenseConditions, "license-c", "", false, "show license conditions")
 	rootCmd.Flags().BoolVarP(&flags.ShowLicenseWarranty, "license-w", "", false, "show license warranty")
