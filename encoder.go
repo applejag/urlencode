@@ -28,8 +28,8 @@ import (
 // The code in this file has been taken from the source code of the `net/url`
 // Go package, v1.17.1.
 
-var escapedColor = color.New(color.BgBlack, color.FgYellow)
-var unescapedColor = color.New(color.BgBlack, color.FgYellow)
+var escapedColor = color.New(color.FgMagenta)
+var unescapedColor = color.New(color.FgRed)
 
 const upperHex = "0123456789ABCDEF"
 
