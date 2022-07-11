@@ -28,7 +28,6 @@ import (
 	"github.com/jilleJr/urlencode/pkg/license"
 	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 const version = "v1.1.0"
@@ -102,11 +101,11 @@ and prints the encoded/decoded value to STDOUT.`,
 		}
 
 		var reader io.Reader
-		if pflag.NArg() == 0 {
+		if len(args) == 0 {
 			reader = os.Stdin
 			defer os.Stdin.Close()
 		} else {
-			filename := pflag.Arg(0)
+			filename := args[0]
 			file, err := os.Open(filename)
 			if err != nil {
 				printErr(err)
