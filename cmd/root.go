@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const version = "v1.0.0"
+const version = "v1.1.0"
 
 var versionText = fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
 
