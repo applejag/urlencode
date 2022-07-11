@@ -15,14 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package main
+package license
 
 import (
 	_ "embed"
 )
 
-//go:embed assets/GPL-3.0-or-later-conditions.txt
-var licenseConditions string
+// LicenseConditions is the conditions of this program's license.
+//
+//go:embed GPL-3.0-or-later-conditions.txt
+var LicenseConditions string
 
-//go:embed assets/GPL-3.0-or-later-warranty.txt
-var licenseWarranty string
+// LicenseWarranty is the warranty notice of this program's license.
+//
+//go:embed GPL-3.0-or-later-warranty.txt
+var LicenseWarranty string

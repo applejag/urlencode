@@ -25,6 +25,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"github.com/jilleJr/urlencode/pkg/license"
 	"github.com/mattn/go-colorable"
 	"github.com/spf13/pflag"
 )
@@ -86,12 +87,12 @@ func main() {
 	}
 
 	if flags.ShowLicenseConditions {
-		fmt.Println(licenseConditions)
+		fmt.Println(license.Conditions)
 		os.Exit(0)
 	}
 
 	if flags.ShowLicenseWarranty {
-		fmt.Println(licenseWarranty)
+		fmt.Println(license.Warranty)
 		os.Exit(0)
 	}
 
