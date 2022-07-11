@@ -14,7 +14,7 @@ Super basic URL encoding utility. I needed one, so I decided to make one.
 
 ## Installation
 
-Requires Go v1.16 (or higher)
+Requires Go v1.18 (or higher)
 
 ```console
 $ go install github.com/jilleJr/urlencode@latest

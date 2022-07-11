@@ -79,7 +79,7 @@ func encodingsMessage() string {
 
 	sb.WriteString("\n                         ")
 	const example2 = "http://[::1%25eth0]/home/index.html"
-	commentColor.Fprint(&sb, example2)
+	commentColor.Fprint(&sb, any(example2))
 	sb.WriteByte('\n')
 
 	writeRow(&sb, example2, []encodingFieldHelp{
