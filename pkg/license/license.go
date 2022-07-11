@@ -21,12 +21,12 @@ import (
 	_ "embed"
 )
 
-// LicenseConditions is the conditions of this program's license.
+// Conditions is the conditions of this program's license.
 //
 //go:embed GPL-3.0-or-later-conditions.txt
-var LicenseConditions string
+var Conditions string
 
-// LicenseWarranty is the warranty notice of this program's license.
+// Warranty is the warranty notice of this program's license.
 //
 //go:embed GPL-3.0-or-later-warranty.txt
-var LicenseWarranty string
+var Warranty string

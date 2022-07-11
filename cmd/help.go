@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package main
+package cmd
 
 import (
 	"os"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
@@ -89,11 +90,11 @@ func encodingsMessage() string {
 	return sb.String()
 }
 
-func flagsMessage() string {
+func flagsMessage(c *cobra.Command) string {
 	var sb strings.Builder
 	sb.WriteString("Flags:\n")
 
-	pflag.VisitAll(func(flag *pflag.Flag) {
+	c.Flags().VisitAll(func(flag *pflag.Flag) {
 		if flag.Hidden {
 			return
 		}
@@ -133,7 +134,7 @@ func flagsMessage() string {
 func sampleUsageMessage() string {
 	var sb strings.Builder
 	sb.WriteString(`
-Encodes/decodes the input value for HTTP URL by default and prints
+Encodes/decodes the input value for HTTP URL and prints
 the encoded/decoded value to STDOUT.
 `)
 
