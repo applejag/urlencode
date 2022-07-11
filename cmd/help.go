@@ -113,15 +113,15 @@ func flagsMessage(c *cobra.Command) string {
 		flagNameColor.Fprintf(&sb, "--%s", flag.Name)
 		width += 2 + len(flag.Name)
 		t := flag.Value.Type()
-		if t == "string" {
+		if t != "bool" {
 			sb.WriteByte(' ')
-			flagValueColor.Fprintf(&sb, "string")
-			width += 7
+			flagValueColor.Fprintf(&sb, t)
+			width += len(t) + 1
 		}
 		const spaces = "                         "
 		sb.WriteString(spaces[width:])
 		sb.WriteString(flag.Usage)
-		if flag.DefValue != "" && t == "string" {
+		if flag.DefValue != "" && t != "bool" {
 			sb.WriteByte(' ')
 			commentColor.Fprint(&sb, "(default: ")
 			flagValueColor.Fprintf(&sb, `"%s"`, flag.DefValue)

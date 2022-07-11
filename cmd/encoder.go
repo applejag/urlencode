@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/jilleJr/urlencode/pkg/flagtype"
 )
 
 // The code in this file has been taken from the source code of the `net/url`
@@ -61,27 +62,15 @@ func unHex(c byte) byte {
 	return 0
 }
 
-type encoding int
-
-const (
-	encodePath encoding = 1 + iota
-	encodePathSegment
-	encodeHost
-	encodeZone
-	encodeUserPassword
-	encodeQueryComponent
-	encodeFragment
-)
-
 // shouldEscape has been copied from
 // https://cs.opensource.google/go/go/+/refs/tags/go1.17.1:src/net/url/url.go;l=100-175
-func shouldEscape(c byte, mode encoding) bool {
+func shouldEscape(c byte, mode flagtype.Encoding) bool {
 	// §2.3 Unreserved characters (alphanum)
 	if 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' {
 		return false
 	}
 
-	if mode == encodeHost || mode == encodeZone {
+	if mode == flagtype.EncodeHost || mode == flagtype.EncodeZone {
 		// §3.2.2 Host allows
 		//	sub-delims = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
 		// as part of reg-name.
@@ -105,37 +94,37 @@ func shouldEscape(c byte, mode encoding) bool {
 		// Different sections of the URL allow a few of
 		// the reserved characters to appear unescaped.
 		switch mode {
-		case encodePath: // §3.3
+		case flagtype.EncodePath: // §3.3
 			// The RFC allows : @ & = + $ but saves / ; , for assigning
 			// meaning to individual path segments. This package
 			// only manipulates the path as a whole, so we allow those
 			// last three as well. That leaves only ? to escape.
 			return c == '?'
 
-		case encodePathSegment: // §3.3
+		case flagtype.EncodePathSegment: // §3.3
 			// The RFC allows : @ & = + $ but saves / ; , for assigning
 			// meaning to individual path segments.
 			return c == '/' || c == ';' || c == ',' || c == '?'
 
-		case encodeUserPassword: // §3.2.1
+		case flagtype.EncodeUserPassword: // §3.2.1
 			// The RFC allows ';', ':', '&', '=', '+', '$', and ',' in
 			// userinfo, so we must escape only '@', '/', and '?'.
 			// The parsing of userinfo treats ':' as special so we must escape
 			// that too.
 			return c == '@' || c == '/' || c == '?' || c == ':'
 
-		case encodeQueryComponent: // §3.4
+		case flagtype.EncodeQueryComponent: // §3.4
 			// The RFC reserves (so we must escape) everything.
 			return true
 
-		case encodeFragment: // §4.1
+		case flagtype.EncodeFragment: // §4.1
 			// The RFC text is silent but the grammar allows
 			// everything, so escape nothing.
 			return false
 		}
 	}
 
-	if mode == encodeFragment {
+	if mode == flagtype.EncodeFragment {
 		// RFC 3986 §2.2 allows not escaping sub-delims. A subset of sub-delims are
 		// included in reserved from RFC 2396 §2.2. The remaining sub-delims do not
 		// need to be escaped. To minimize potential breakage, we apply two restrictions:
@@ -154,7 +143,7 @@ func shouldEscape(c byte, mode encoding) bool {
 
 // unescape has been copied and modified from
 // https://cs.opensource.google/go/go/+/refs/tags/go1.17.1:src/net/url/url.go;l=199-270
-func unescape(s string, mode encoding) (string, error) {
+func unescape(s string, mode flagtype.Encoding) (string, error) {
 	// Count %, check that they're well-formed.
 	n := 0
 	hasPlus := false
@@ -175,10 +164,10 @@ func unescape(s string, mode encoding) (string, error) {
 			// But https://tools.ietf.org/html/rfc6874#section-2
 			// introduces %25 being allowed to escape a percent sign
 			// in IPv6 scoped-address literals. Yay.
-			if mode == encodeHost && unHex(s[i+1]) < 8 && s[i:i+3] != "%25" {
+			if mode == flagtype.EncodeHost && unHex(s[i+1]) < 8 && s[i:i+3] != "%25" {
 				return "", url.EscapeError(s[i : i+3])
 			}
-			if mode == encodeZone {
+			if mode == flagtype.EncodeZone {
 				// RFC 6874 says basically "anything goes" for zone identifiers
 				// and that even non-ASCII can be redundantly escaped,
 				// but it seems prudent to restrict %-escaped bytes here to those
@@ -187,16 +176,16 @@ func unescape(s string, mode encoding) (string, error) {
 				// to introduce bytes you couldn't just write directly.
 				// But Windows puts spaces here! Yay.
 				v := unHex(s[i+1])<<4 | unHex(s[i+2])
-				if s[i:i+3] != "%25" && v != ' ' && shouldEscape(v, encodeHost) {
+				if s[i:i+3] != "%25" && v != ' ' && shouldEscape(v, flagtype.EncodeHost) {
 					return "", url.EscapeError(s[i : i+3])
 				}
 			}
 			i += 3
 		case '+':
-			hasPlus = mode == encodeQueryComponent
+			hasPlus = mode == flagtype.EncodeQueryComponent
 			i++
 		default:
-			if (mode == encodeHost || mode == encodeZone) && s[i] < 0x80 && shouldEscape(s[i], mode) {
+			if (mode == flagtype.EncodeHost || mode == flagtype.EncodeZone) && s[i] < 0x80 && shouldEscape(s[i], mode) {
 				return "", url.InvalidHostError(s[i : i+1])
 			}
 			i++
@@ -217,7 +206,7 @@ func unescape(s string, mode encoding) (string, error) {
 			unescapedColor.Fprint(&t, string(strByte[:]))
 			i += 2
 		case '+':
-			if mode == encodeQueryComponent {
+			if mode == flagtype.EncodeQueryComponent {
 				unescapedColor.Fprint(&t, " ")
 			} else {
 				t.WriteByte('+')
@@ -231,12 +220,12 @@ func unescape(s string, mode encoding) (string, error) {
 
 // unescape has been copied and modified from
 // https://cs.opensource.google/go/go/+/refs/tags/go1.17.1:src/net/url/url.go;l=284-338
-func escape(s string, mode encoding) string {
+func escape(s string, mode flagtype.Encoding) string {
 	spaceCount, hexCount := 0, 0
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if shouldEscape(c, mode) {
-			if c == ' ' && mode == encodeQueryComponent {
+			if c == ' ' && mode == flagtype.EncodeQueryComponent {
 				spaceCount++
 			} else {
 				hexCount++
@@ -252,7 +241,7 @@ func escape(s string, mode encoding) string {
 
 	for i := 0; i < len(s); i++ {
 		switch c := s[i]; {
-		case c == ' ' && mode == encodeQueryComponent:
+		case c == ' ' && mode == flagtype.EncodeQueryComponent:
 			escapedColor.Fprint(&sb, "+")
 		case shouldEscape(c, mode):
 			var strByte [3]byte

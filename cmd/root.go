@@ -22,9 +22,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	"github.com/fatih/color"
+	"github.com/jilleJr/urlencode/pkg/flagtype"
 	"github.com/jilleJr/urlencode/pkg/license"
 	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
@@ -40,14 +40,16 @@ var versionText = fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
   This is free software, and you are welcome to redistribute it
   under certain conditions; type '--license-c' for details.`, version)
 
-var flags struct {
-	Encode                string
+var flags = struct {
+	Encode                flagtype.Encoding
 	Decode                bool
 	AllLines              bool
 	ShowLicenseWarranty   bool
 	ShowLicenseConditions bool
-	Completions           string
+	Completions           flagtype.Shell
 	ShowCompletionsHelp   bool
+}{
+	Encode: flagtype.EncodePathSegment,
 }
 
 var (
@@ -83,42 +85,20 @@ and prints the encoded/decoded value to STDOUT.`,
 		}
 
 		if flags.Completions != "" {
-			switch strings.ToLower(flags.Completions) {
-			case "bash":
+			switch flags.Completions {
+			case flagtype.ShellBash:
 				cmd.GenBashCompletionV2(os.Stdout, true)
-			case "zsh":
+			case flagtype.ShellZsh:
 				cmd.GenZshCompletion(os.Stdout)
-			case "fish":
+			case flagtype.ShellFish:
 				cmd.GenFishCompletion(os.Stdout, true)
-			case "powershell", "pwsh":
+			case flagtype.ShellPowerShell:
 				cmd.GenPowerShellCompletion(os.Stdout)
 			default:
-				printErr(fmt.Errorf("unknown shell: %q", flags.Completions))
+				printErr(fmt.Errorf("unsupported shell: %q", flags.Completions))
 				os.Exit(1)
 			}
 			return
-		}
-
-		var enc encoding
-		switch flags.Encode {
-		case "s", "path-segment":
-			enc = encodePathSegment
-		case "p", "path":
-			enc = encodePath
-		case "q", "query":
-			enc = encodeQueryComponent
-		case "h", "host":
-			enc = encodeHost
-		case "z", "zone":
-			enc = encodeZone
-		case "c", "cred":
-			enc = encodeUserPassword
-		case "f", "frag":
-			enc = encodeFragment
-		default:
-			printErr(fmt.Errorf("invalid encoding: %q", flags.Encode))
-			fmt.Fprint(stdout, encodingsMessage())
-			os.Exit(1)
 		}
 
 		var reader io.Reader
@@ -147,14 +127,14 @@ and prints the encoded/decoded value to STDOUT.`,
 			value := scanner.Text()
 
 			if flags.Decode {
-				escaped, err := unescape(value, enc)
+				escaped, err := unescape(value, flags.Encode)
 				if err != nil {
 					printErr(err)
 					os.Exit(2)
 				}
 				fmt.Fprint(stdout, escaped)
 			} else {
-				fmt.Fprint(stdout, escape(value, enc))
+				fmt.Fprint(stdout, escape(value, flags.Encode))
 			}
 
 			fmt.Println()
@@ -194,10 +174,12 @@ func init() {
 	// Only print help if calling with --help
 	rootCmd.SilenceUsage = true
 
-	rootCmd.Flags().StringVarP(&flags.Encode, "encoding", "e", "path-segment", "encode/decode format")
+	rootCmd.Flags().VarP(&flags.Encode, "encoding", "e", "encode/decode format")
+	rootCmd.RegisterFlagCompletionFunc("encoding", flagtype.CompleteEncoding)
 	rootCmd.Flags().BoolVarP(&flags.Decode, "decode", "d", false, "decodes, instead of encodes")
 	rootCmd.Flags().BoolVarP(&flags.AllLines, "all", "a", false, "use all input at once, instead of line-by-line")
-	rootCmd.Flags().StringVar(&flags.Completions, "completion", "", "generate shell completions")
+	rootCmd.Flags().Var(&flags.Completions, "completion", `generate shell completions (for "bash", "zsh", "fish", or "powershell")`)
+	rootCmd.RegisterFlagCompletionFunc("completion", flagtype.CompleteShell)
 	rootCmd.Flags().BoolVar(&flags.ShowCompletionsHelp, "help-completion", false, "help for adding shell completions")
 
 	rootCmd.Flags().BoolVarP(&flags.ShowLicenseConditions, "license-c", "", false, "show license conditions")
