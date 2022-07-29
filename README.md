@@ -34,7 +34,7 @@ $ go install github.com/jilleJr/urlencode@latest
 
 ```console
 $ urlencode --help
-urlencode v1.1.0  Copyright (C) 2021  Kalle Jillheden
+urlencode v1.1.0  Copyright (C) 2021  Kalle Fagerberg
 
   License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
   This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'

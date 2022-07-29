@@ -32,7 +32,7 @@ import (
 
 const version = "v1.1.0"
 
-var versionText = fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
+var versionText = fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Fagerberg
 
   License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
   This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
@@ -155,13 +155,6 @@ func Execute() {
 }
 
 func init() {
-	versionText := fmt.Sprintf(`urlencode %s  Copyright (C) 2021  Kalle Jillheden
-
-  License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
-  This program comes with ABSOLUTELY NO WARRANTY; for details type '--license-w'
-  This is free software, and you are welcome to redistribute it
-  under certain conditions; type '--license-c' for details.`, version)
-
 	rootCmd.SetHelpFunc(func(c *cobra.Command, args []string) {
 		fmt.Fprintln(stderr, versionText)
 		fmt.Fprintln(stderr, sampleUsageMessage())
